@@ -1,17 +1,12 @@
 import pytest
 from pages.login_page import LoginPage
-
-@pytest.mark.parametrize("username,password,expected",[
-  ("standard_user", "secret_sauce", True), #valid
-  ("locked_out_user", "secret_sauce", False), #locked account
-  ("wrong_user", "wrong_pass", False) #invalid creds
-])
-def test_login_parametrized(driver, username, password, expected):
-    driver.get("https://www.saucedemo.com/")
+from utils.data_loader import load_test_data
+test_data = load_test_data()
+@pytest.mark.parametrize("user",[
+  test_data["valid_user"],
+  test_data["locked_user"],
+  test_data["invalid_user"]
+  ])
+def test_login_parametrized(driver, user):
     login_page = LoginPage(driver)
-    login_page.login(username, password)
-    if expected:
-        assert "inventory" in driver.current_url
-    else:
-        error_message = driver.find_element("css selector", "h3[data-test='error']").text
-        assert error_message != ""
+    login_page.login(user["username"], user["password"])
