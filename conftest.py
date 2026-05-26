@@ -3,6 +3,7 @@ from selenium import webdriver
 from pages.login_page import LoginPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
+from pages.inventory_page import InventoryPage
 from selenium.webdriver.chrome.options import Options
 
 BASE_URL = "https://www.saucedemo.com/"
@@ -33,6 +34,10 @@ def cart_page(driver):
 @pytest.fixture
 def checkout_page(driver):
     return CheckoutPage(driver)
+
+@pytest.fixture
+def inventory_page(driver):
+    return InventoryPage(driver)
 
 @pytest.hookimpl(tryfirst=True,hookwrapper=True)
 def pytest_runtest_makereport(item, call):
