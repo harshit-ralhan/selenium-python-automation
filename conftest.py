@@ -1,23 +1,34 @@
 import pytest
-from selenium import webdriver
 from pages.login_page import LoginPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 from pages.inventory_page import InventoryPage
-from selenium.webdriver.chrome.options import Options
-
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.options import Options as FireFoxOptions
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver import Edge
 BASE_URL = "https://www.saucedemo.com/"
-
-@pytest.fixture(scope="function",params=["chrome"])
+@pytest.fixture(scope="function",params=["chrome","edge","firefox"])
 def driver(request):
     if request.param == "chrome":
-        options = Options()
+        options = ChromeOptions()
         options.add_argument("--incognito")
-        driver = webdriver.Chrome(options=options)
+        from selenium.webdriver import Chrome
+        driver = Chrome(options=options)
     elif request.param == "firefox":
-        options = Options()
+        options = FireFoxOptions()
+        options.add_argument("-private")
+        from selenium.webdriver import Firefox
+        driver = Firefox(options=options)
+    elif request.param == "edge":
+        options = EdgeOptions()
+        options.add_argument("--inprivate")
+        driver = Edge(options=options)
+    elif request.param == "brave":
+        options = ChromeOptions()
+        options.binary_location = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
         options.add_argument("--incognito")
-        driver = webdriver.Firefox(options=options)
+        driver = Chrome(options=options)
     driver.maximize_window()
     driver.get(BASE_URL)
     yield driver
