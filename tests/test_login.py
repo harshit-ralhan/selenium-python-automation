@@ -7,6 +7,8 @@ test_data = load_test_data()
   test_data["locked_user"],
   test_data["invalid_user"]
   ])
-def test_login_parametrized(driver, user):
+def test_login_parametrized(driver, user, logger):
+    logger.info("Starting valid login test")
     login_page = LoginPage(driver)
     login_page.login(user["username"], user["password"])
+    logger.info("Valid login test passed")

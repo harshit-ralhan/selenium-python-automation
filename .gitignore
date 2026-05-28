@@ -12,3 +12,7 @@ __pycache__/
 # Test reports
 reports/
 report/
+
+# Logs
+logs/
+log/

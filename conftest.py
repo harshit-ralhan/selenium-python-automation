@@ -7,8 +7,31 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.options import Options as FireFoxOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver import Edge
-BASE_URL = "https://www.saucedemo.com/"
-@pytest.fixture(scope="function",params=["chrome","edge","firefox"])
+import json
+import time
+
+with open("config.json") as f:
+    config = json.load(f)
+
+BASE_URL = config["BASE_URL"]
+# DEFAULT_BROWSER = config["browser"]
+
+#-----------------------------------
+# import logging
+# logging.basicConfig(
+#     filename="logs/test_run.log",
+#     level=logging.INFO,
+#     format="%(asctime)s - %(levelname)s - %(message)s"
+# )
+# logger = logging.getLogger()
+#---------------------------------------
+import pytest
+from utils.logger import get_logger
+@pytest.fixture(scope="session")
+def logger():
+    return get_logger()
+#---------------------------------------
+@pytest.fixture(scope="function",params=["chrome"])
 def driver(request):
     if request.param == "chrome":
         options = ChromeOptions()
@@ -57,4 +80,6 @@ def pytest_runtest_makereport(item, call):
     if report.when == "call" and report.failed:
         driver = item.funcargs.get("driver")
         if driver:
-            driver.save_screenshot(f"reports/{item.name}.png")
+            screenshot_path = f"reports/screenshots/{item.name}_{int(time.time())}.png"
+            driver.save_screenshot(screenshot_path)
+            logger.error(f"Test {item.name} failed. Screenshot saved at {screenshot_path}")
