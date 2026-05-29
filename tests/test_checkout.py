@@ -1,6 +1,6 @@
 import pytest
-from utils.data_loader import load_test_data
-test_data = load_test_data()
+from utils.data_loader import load_test_data_json
+test_data = load_test_data_json()
 
 @pytest.mark.parametrize("checkout_info",[
   test_data['valid_check_out_info']
