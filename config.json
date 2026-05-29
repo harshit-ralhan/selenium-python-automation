@@ -1,3 +1,4 @@
 {
-  "BASE_URL": "https://www.saucedemo.com/"
+  "BASE_URL": "https://www.saucedemo.com/",
+  "data_source": "csv"
 }

@@ -1,7 +1,6 @@
 import pytest
-from utils.data_loader import load_test_data_json
-test_data = load_test_data_json()
-
+from utils.data_loader import load_test_data_json_as_dict
+test_data = load_test_data_json_as_dict()
 @pytest.mark.parametrize("checkout_info",[
   test_data['valid_check_out_info']
 ])
@@ -14,7 +13,6 @@ def test_checkout_valid_info(login_page, cart_page, checkout_page, checkout_info
   checkout_page.navigate_to_checkout_page()
   checkout_page.enter_shipping_info(checkout_info["first_name"], checkout_info["last_name"],
   checkout_info["zip"])
-  
   checkout_page.submit_order()
   # verify confirmation
   assert "Thank you for your order!" in checkout_page.get_confirmation_message()

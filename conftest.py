@@ -10,8 +10,13 @@ from selenium.webdriver import Edge
 import json
 import time
 import os
+
 with open("config.json") as f:
     config = json.load(f)
+    
+@pytest.fixture(scope="session")
+def app_config():
+    return config
 
 BASE_URL = config["BASE_URL"]
 # DEFAULT_BROWSER = config["browser"]

@@ -9,7 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        data_source: [json, csv, excel]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -39,8 +41,7 @@ jobs:
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: selenium-test-artifacts
-
+          name: selenium-test-artifacts-${{ matrix.data_source }}
           path: |
             reports/
             reports/screenshots/
