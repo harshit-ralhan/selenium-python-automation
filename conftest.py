@@ -9,7 +9,7 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver import Edge
 import json
 import time
-
+import os
 with open("config.json") as f:
     config = json.load(f)
 
@@ -27,9 +27,10 @@ BASE_URL = config["BASE_URL"]
 #---------------------------------------
 import pytest
 from utils.logger import get_logger
+my_logger = get_logger()
 @pytest.fixture(scope="session")
 def logger():
-    return get_logger()
+    return my_logger
 #---------------------------------------
 @pytest.fixture(scope="function",params=["chrome"])
 def driver(request):
@@ -81,5 +82,6 @@ def pytest_runtest_makereport(item, call):
         driver = item.funcargs.get("driver")
         if driver:
             screenshot_path = f"reports/screenshots/{item.name}_{int(time.time())}.png"
+            os.makedirs("reports/screenshots", exist_ok=True)
             driver.save_screenshot(screenshot_path)
-            logger.error(f"Test {item.name} failed. Screenshot saved at {screenshot_path}")
+            my_logger.error(f"Test {item.name} failed. Screenshot saved at {screenshot_path}")
