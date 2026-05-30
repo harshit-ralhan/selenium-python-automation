@@ -1,0 +1,22 @@
+{
+  "valid_check_out_info": {
+    "first_name": "Harshit",
+    "last_name": "Ralhan",
+    "zip": "411045"
+  },
+  "invalid_check_out_info_1": {
+    "first_name": "",
+    "last_name": "Ralhan",
+    "zip": "411045"
+  },
+  "invalid_check_out_info_2": {
+    "first_name": "Harshit",
+    "last_name": "",
+    "zip": "411045"
+  },
+  "invalid_check_out_info_3": {
+    "first_name": "Harshit",
+    "last_name": "Ralhan",
+    "zip": ""
+  }
+}

@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        browser: [chrome, firefox, edge]
         data_source: [json, csv, excel]
     steps:
       - name: Checkout repo
@@ -36,13 +37,13 @@ jobs:
       - name: Run tests with pytest
         run: |
           mkdir -p reports
-          pytest tests/ --html=reports/report.html --self-contained-html -v
+          pytest tests/ --browser=${{ matrix.browser }} --data-source=${{ matrix.data_source }} --html=reports/report.html --self-contained-html -v
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: selenium-test-artifacts-${{ matrix.data_source }}
+          name: selenium-test-artifacts-${{ matrix.browser }}-${{ matrix.data_source }}
           path: |
-            reports/
+            reports/${{ matrix.browser}}_${{matrix.data_source}}/
             reports/screenshots/
-            logs/
+            logs/${{matrix.browser}}_${{matrix.data_source}}/

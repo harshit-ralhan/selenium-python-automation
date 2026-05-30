@@ -1,7 +1,7 @@
 import json
 import csv
 import pandas
-def load_test_data_json_as_dict(file="data/test_data.json"):
+def load_checkout_test_data(file="data/checkout_test_data.json"):
   with open(file) as f:
     return json.load(f)
 def load_test_data_json(file="data/test_data.json"):
