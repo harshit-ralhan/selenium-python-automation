@@ -31,23 +31,15 @@ def app_config():
 BASE_URL = config["BASE_URL"]
 # DEFAULT_BROWSER = config["browser"]
 
-#-----------------------------------
-# import logging
-# logging.basicConfig(
-#     filename="logs/test_run.log",
-#     level=logging.INFO,
-#     format="%(asctime)s - %(levelname)s - %(message)s"
-# )
-# logger = logging.getLogger()
-#---------------------------------------
-import pytest
 from utils.logger import get_logger
-my_logger = get_logger()
+my_logger = None
 @pytest.fixture(scope="session")
 def logger(request):
     browser = request.config.getoption("--browser")    
     data_source = request.config.getoption("--data-source")
-    return get_logger(browser=browser,data_source=data_source)
+    global my_logger, log_file_path
+    my_logger, log_file_path = get_logger(browser=browser,data_source=data_source)
+    return my_logger
 #---------------------------------------
 # """
 # # For Testing across list of browsers
@@ -83,7 +75,8 @@ def pytest_addoption(parser):
     parser.addoption(
         "--data-source",
         action="store",
-        default="json"
+        default="json",
+        help = "Data source option: csv, json, excel"
     )
 # For testing over single browser provided through BROWSER env i.e environment variable or --browser flag/option i.e through CLI
 # """
@@ -136,6 +129,26 @@ def pytest_html_report_title(report):
     from datetime import datetime
     report.title = f"Checkout Tests - {datetime.now().strftime('%Y-%m-%d')} ({report.config.getoption('--browser')}, {report.config.getoption('--data-source')})"
 
+browser_option = None
+data_source_option = None
+
+def pytest_configure(config):
+    global browser_option, data_source_option
+    browser_option = config.getoption("--browser")
+    data_source_option = config.getoption("--data-source")
+
+def pytest_html_results_summary(prefix, summary, postfix):
+    import platform
+    prefix.extend([f"OS: {platform.system()} {platform.release()}"])
+    prefix.extend([f"Browser: {browser_option}"])
+    prefix.extend([f"Data Source: {data_source_option}"])
+
+# import platform
+# def pytest_configure(config):
+#     config._metadata['OS'] = platform.system() + " " + platform.release()
+#     config._metadata['Browser'] = config.getoption("--browser")
+#     config._metadata['Data Source'] = config.getoption("--data-source")
+
 @pytest.hookimpl(tryfirst=True,hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
@@ -145,10 +158,12 @@ def pytest_runtest_makereport(item, call):
         if driver:
             browser = item.config.getoption("--browser")
             data_source = item.config.getoption("--data-source")
-            folder = f"reports/{browser}_{data_source}/screenshots"
-            os.makedirs(folder, exist_ok=True)
-            screenshot_path = f"{folder}/{item.name}_{int(time.time())}.png"
+            screenshot_folder = f"reports/{browser}_{data_source}/screenshots"
+            os.makedirs(screenshot_folder, exist_ok=True)
+            screenshot_path = f"{screenshot_folder}/{item.name}_{int(time.time())}.png"
             driver.save_screenshot(screenshot_path)
-            log_folder = f"logs/{browser}_{data_source}"
-            os.makedirs(log_folder,exist_ok=True)
             my_logger.error(f"Test {item.name} failed. Screenshot saved at {screenshot_path}")
+            if hasattr(report, "extra"):
+                from pytest_html import extras
+                report.extra.append(extras.image(screenshot_path))
+                report.extra.append(extras.text(f"Log file: {log_file_path}"))
