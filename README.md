@@ -1,4 +1,7 @@
 ![CI](https://github.com/harshit-ralhan/selenium-python-automation/actions/workflows/pytest.yml/badge.svg)
+![Coverage](https://codecov.io/gh/harshit-ralhan/selenium-python-automation/branch/main/graph/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue.svg)
+![Lint](https://github.com/harshit-ralhan/selenium-python-automation/actions/workflows/lint.yml/badge.svg)
 
 # Selenium Python Automation
 
@@ -60,9 +63,10 @@ pytest -v --browser=chrome --data-source=json
 
 Run tests in parallel using pytest-xdist:
 
-````bash
+```bash
 pytest -n 4
 pytest -n 3 -v --browser=edge --data-source=csv
+```
 
 ## Reports & Artifacts
 
@@ -76,6 +80,10 @@ Each test run produces three types of artifacts:
   Captured automatically when a test fails, saved under:
   `reports/<browser>_<data_source>/screenshots/`
 
+  Here’s an example test report screenshot:
+
+![Test Report Screenshot](reports/sample_report.png)
+
 - **Logs**
   Timestamped log files for each run, saved under:
   `logs/<browser>_<data_source>/`
@@ -83,6 +91,19 @@ Each test run produces three types of artifacts:
 ### Example Folder Structure
 
 For a run with Firefox + CSV:
+
+## Flaky Test Handling
+
+- Implemented retry logic using `pytest-rerunfailures`
+- Demonstrated with a simulated flaky test (`tests/test_flaky.py`)
+- Ensures pipeline stability against intermittent UI failures
+
+### How It Works
+
+- Failing tests are retried automatically with:
+  ```bash
+  pytest -v --reruns 2 --reruns-delay 5 --html=reports/report.html --self-contained-html
+  ```
 
 ## CI/CD Integration
 
@@ -152,7 +173,7 @@ This framework includes several recruiter‑friendly improvements:
 ├── logs/ # Log files
 ├── requirements.txt # Dependencies
 └── pytest.yml # GitHub Actions workflow
-````
+```
 
 ## Advanced Reporting
 
