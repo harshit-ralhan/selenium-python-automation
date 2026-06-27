@@ -155,6 +155,48 @@ This framework includes several recruiter‑friendly improvements:
 
 ---
 
+## 🌐 Remote & Cloud Execution
+
+This framework supports running tests on a **remote Selenium Grid** using Dockerized containers.
+
+## 🐳 Dockerized Selenium Grid Setup
+
+### ▶️ Start Container
+
+```bash
+docker run -d -p 4444:4444 -p 7900:7900 --name selenium-grid selenium/standalone-chrome:latest
+```
+
+### If in case you need to Stop Container
+
+```bash
+docker stop selenium-grid
+```
+
+### If in case you need to Remove Container
+
+```bash
+docker rm selenium-grid
+```
+
+### Access Grid and VNC
+
+- _Selenium Grid UI_: http://localhost:4444
+- _noVNC Viewer_: http://localhost:7900
+- _Default VNC password_: secret
+
+### 🚀 Run Tests Remotely
+
+```bash
+pytest --remote
+```
+
+For Cross-browser testing: Use --browser (chrome/firefox/edge)
+
+```bash
+pytest --browser=chrome --remote
+```
+
 ## Project Highlights
 
 - **Cross‑Browser Testing**: Supports Chrome, Firefox, and Edge.

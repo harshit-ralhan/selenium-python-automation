@@ -78,26 +78,52 @@ def pytest_addoption(parser):
         default="json",
         help = "Data source option: csv, json, excel"
     )
+    parser.addoption(
+        "--remote",
+        action="store_true",
+        help="Run tests on Selenium Grid"
+    )
 # For testing over single browser provided through BROWSER env i.e environment variable or --browser flag/option i.e through CLI
 # """
+from selenium import webdriver
 @pytest.fixture(scope="function")
 def driver(request):
     # browser = os.getenv("BROWSER","chrome")   # Read from environment variable. Given as format $env:BROWSER="edge"
     browser = request.config.getoption("--browser")   # Read from CLI. Given as format --browser=edge or --browser="edge"
+    remote = request.config.getoption("--remote")
     if browser == "chrome":
         options = ChromeOptions()
         options.add_argument("--incognito")
-        driver = Chrome(options=options)
+        if remote:
+            driver = webdriver.Remote(
+                command_executor="http://localhost:4444/wd/hub",
+                options=options
+            )
+        else:
+            driver = webdriver.Chrome(options=options)
+
     elif browser == "firefox":
         options = FirefoxOptions()
         options.add_argument("-private")
-        service = FirefoxService(r"C:\Tools\geckodriver\geckodriver.exe")
-        driver = Firefox(service=service,options=options)
+        if remote:
+            driver = webdriver.Remote(
+                command_executor="http://localhost:4444/wd/hub",
+                options=options
+            )
+        else:
+            service = FirefoxService(r"C:\Tools\geckodriver\geckodriver.exe")
+            driver = webdriver.Firefox(service=service,options=options)
     elif browser == "edge":
         options = EdgeOptions()
         options.add_argument("--inprivate")
-        service = EdgeService(r"C:\Tools\edgedriver\msedgedriver.exe")
-        driver = Edge(service=service,options=options)
+        if remote:
+            driver = webdriver.Remote(
+                command_executor="http://localhost:4444/wd/hub",
+                options=options
+            )
+        else:
+            service = EdgeService(r"C:\Tools\edgedriver\msedgedriver.exe")
+            driver = webdriver.Edge(service=service,options=options)
     driver.maximize_window()
     driver.get(BASE_URL)
     yield driver

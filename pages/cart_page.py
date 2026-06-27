@@ -1,10 +1,8 @@
 from selenium.webdriver.common.by import By
-import time
 class CartPage:
   def __init__(self,driver):
     self.driver = driver
   def add_item_to_cart(self,item_name):
-    time.sleep(5)
     path_of_add_to_cart_button = f"//div[text()='{item_name}']/parent::a/parent::div/following-sibling::div/button"
     # print(f"path is ${path_of_add_to_cart_button}")
     locator = (By.XPATH, path_of_add_to_cart_button)
